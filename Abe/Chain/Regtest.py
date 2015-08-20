@@ -22,7 +22,7 @@ class Regtest(Sha256Chain):
     """
     def __init__(chain, **kwargs):
         chain.name = 'Regtest'
-        chain.code3 = 'BC0'
+        chain.code3 = 'TBTC'
         chain.address_version = '\x6f'
         chain.script_addr_vers = '\xc4'
         chain.magic = '\xfa\xbf\xb5\xda'
