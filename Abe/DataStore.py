@@ -61,6 +61,7 @@ WORK_BITS = 304  # XXX more than necessary.
 
 CHAIN_CONFIG = [
     {"chain":"Bitcoin"},
+    {"chain":"Regtest"},
     {"chain":"Testnet"},
     {"chain":"Namecoin"},
     {"chain":"Weeds", "policy":"Sha256Chain",
