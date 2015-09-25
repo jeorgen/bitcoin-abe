@@ -689,6 +689,7 @@ class Abe:
         try:
             # XXX Should pass chain to export_tx to help parse scripts.
             tx = abe.store.export_tx(tx_hash = tx_hash, format = 'browser')
+            print tx.keys()
         except DataStore.MalformedHash:
             body += ['<p class="error">Not in correct format.</p>']
             return
@@ -703,6 +704,9 @@ class Abe:
         body = page['body']
 
         def row_to_html(row, this_ch, other_ch, no_link_text):
+            # print row
+            if row.has_key('sequence'):
+                print "SEQUENCE"
             body = page['body']
             body += [
                 '<tr>\n',
@@ -720,6 +724,8 @@ class Abe:
                 '<td>', abe.format_addresses(row, '../', chain), '</td>\n']
             if row['binscript'] is not None:
                 body += ['<td>', escape(decode_script(row['binscript'])), '</td>\n']
+            if row['sequence']:
+                body += ['<td>', str(row['sequence']), '</td>\n']
             body += ['</tr>\n']
 
         body += abe.short_link(page, 't/' + hexb58(tx['hash'][:14]))
@@ -762,7 +768,9 @@ class Abe:
         body += ['</p>\n',
                  '<a name="inputs"><h3>Inputs</h3></a>\n<table>\n',
                  '<tr><th>Index</th><th>Previous output</th><th>Amount</th>',
-                 '<th>From address</th>']
+                 '<th>From address</th><th>Mystery field</th>',                 
+                 '<th>nSeq</th><th>Padding</th><th>Genesis</th><th>Parts (quanta)</th></tr>\n',
+]
         if abe.store.keep_scriptsig:
             body += ['<th>ScriptSig</th>']
         body += ['</tr>\n']
@@ -772,7 +780,8 @@ class Abe:
         body += ['</table>\n',
                  '<a name="outputs"><h3>Outputs</h3></a>\n<table>\n',
                  '<tr><th>Index</th><th>Redeemed at input</th><th>Amount</th>',
-                 '<th>To address</th><th>ScriptPubKey</th></tr>\n']
+                 '<th>To address</th><th>ScriptPubKey</th>'
+]
         for txout in tx['out']:
             row_to_html(txout, 'o', 'i', 'Not yet redeemed')
 

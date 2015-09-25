@@ -1969,7 +1969,10 @@ store._ddl['txout_approx'],
                     txin['scriptSig'] = store.binout(scriptSig)
                 else:
                     txin['raw_scriptSig'] = store.binout_hex(scriptSig)
+
+
                 txin['sequence'] = None if sequence is None else int(sequence)
+                print txin
             txins.append(txin)
 
         txouts = []
@@ -2051,6 +2054,9 @@ store._ddl['txout_approx'],
 
         def parse_row(row):
             pos, script, value, o_hash, o_pos = row[:5]
+            sequence = ""
+            if len(row) > 5:
+                sequence = row[6]
             script = store.binout(script)
             scriptPubKey = store.binout(row[5]) if len(row) >5 else script
 
@@ -2060,6 +2066,7 @@ store._ddl['txout_approx'],
                 "value": None if value is None else int(value),
                 "o_hash": store.hashout_hex(o_hash),
                 "o_pos": None if o_pos is None else int(o_pos),
+                "sequence": sequence
                 }
             store._export_scriptPubKey(ret, chain, scriptPubKey)
 
@@ -2074,7 +2081,9 @@ store._ddl['txout_approx'],
                 txout.txout_value,
                 COALESCE(prevtx.tx_hash, u.txout_tx_hash),
                 COALESCE(txout.txout_pos, u.txout_pos),
-                txout.txout_scriptPubKey
+                txout.txout_scriptPubKey""" + (""",
+                txin.txin_sequence""" if store.keep_scriptsig else """,
+                NULL""") + """
               FROM txin
               LEFT JOIN txout ON (txout.txout_id = txin.txout_id)
               LEFT JOIN tx prevtx ON (txout.tx_id = prevtx.tx_id)
